@@ -205,8 +205,8 @@ end
 pcall(function()
     ShowNotification(
         "🌟 VORTEX ANTICHEAT BYPASS",
-        "• Discord invitation has been sent\n"..
-        "• Click on the Discord icon for our server\n\n"..
+        "• anticheat bypassed\n"..
+        "• vortexhubscript.framer.website\n\n"..
         "Thank you for using Vortex!"
     )
     
