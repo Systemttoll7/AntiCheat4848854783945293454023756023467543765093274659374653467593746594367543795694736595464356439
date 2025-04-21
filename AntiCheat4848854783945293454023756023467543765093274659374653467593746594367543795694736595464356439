@@ -1,0 +1,216 @@
+-- Blockiere spezifisches RemoteEvent
+local mt = getrawmetatable(game)
+setreadonly(mt, false)
+
+local old = mt.__namecall
+
+mt.__namecall = newcclosure(function(self, ...)
+    local method = getnamecallmethod()
+    
+    if method == "FireServer" and tostring(self.Name) == "8a4ec977-3b6c-47be-87f1-69f40e6eee61" then
+        print("[BLOCKIERT] Versuch, RemoteEvent auszuführen:", self)
+        return nil
+    end
+    
+    return old(self, ...)
+end)
+
+-- Verbesserte Funktion zum Öffnen von Webseiten mit besserem Error-Handling
+local function OpenWebsite(url)
+    pcall(function()
+        if syn and syn.request then
+            syn.request({
+                Url = url,
+                Method = "GET"
+            })
+        elseif request then
+            request({
+                Url = url,
+                Method = "GET"
+            })
+        else
+            warn("Webrequest-Funktion nicht verfügbar")
+        end
+    end)
+end
+
+-- Vortex Discord Auto Invite
+pcall(function()
+    local Request = syn and syn.request or request or http_request or fluxus and fluxus.request
+    if Request then
+        Request({
+            Url = "http://127.0.0.1:6463/rpc?v=1",
+            Method = "POST",
+            Headers = {
+                ["Content-Type"] = "application/json",
+                ["Origin"] = "https://discord.com"
+            },
+            Body = game:GetService("HttpService"):JSONEncode({
+                cmd = "INVITE_BROWSER",
+                args = {
+                    code = "XEaaPU5CgH"
+                },
+                nonce = game:GetService("HttpService"):GenerateGUID(false)
+            }),
+        })
+    end
+end)
+
+-- Überarbeitete Benachrichtigungsfunktion mit sicheren Farbwerten
+local function ShowNotification(title, message)
+    if not game:IsLoaded() then game.Loaded:Wait() end
+    
+    -- Sicherstellen, dass CoreGui existiert
+    local CoreGui = game:GetService("CoreGui")
+    if not CoreGui then return end
+
+    -- Sound-Effekt mit Error-Handling
+    pcall(function()
+        local sound = Instance.new("Sound")
+        sound.SoundId = "rbxassetid://4590662766"
+        sound.Volume = 0.3
+        sound.Parent = game:GetService("SoundService")
+        sound:Play()
+        game:GetService("Debris"):AddItem(sound, 3)
+    end)
+    
+    -- Haupt GUI mit Error-Handling
+    pcall(function()
+        local ScreenGui = Instance.new("ScreenGui")
+        ScreenGui.Name = "VortexPremiumNotification_"..tostring(math.random(1,10000))
+        ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+        ScreenGui.Parent = CoreGui
+
+        -- Haupt Frame
+        local MainFrame = Instance.new("Frame")
+        MainFrame.Name = "MainFrame"
+        MainFrame.Size = UDim2.new(0, 400, 0, 150)
+        MainFrame.Position = UDim2.new(1, 450, 1, -180)
+        MainFrame.AnchorPoint = Vector2.new(1, 1)
+        MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+        MainFrame.BackgroundTransparency = 0.15
+        MainFrame.BorderSizePixel = 0
+        MainFrame.Parent = ScreenGui
+
+        -- UIStroke mit Standardfarbe falls nil
+        local UIStroke = Instance.new("UIStroke")
+        UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+        UIStroke.Color = Color3.fromRGB(88, 101, 242) -- Standard Discord-Blau
+        UIStroke.Thickness = 2
+        UIStroke.Transparency = 0.7
+        UIStroke.Parent = MainFrame
+
+        -- Abgerundete Ecken
+        local UICorner = Instance.new("UICorner")
+        UICorner.CornerRadius = UDim.new(0, 10)
+        UICorner.Parent = MainFrame
+
+        -- Titel mit sicheren Farbwerten
+        local TitleLabel = Instance.new("TextLabel")
+        TitleLabel.Name = "TitleLabel"
+        TitleLabel.Size = UDim2.new(1, -50, 0, 40)
+        TitleLabel.Position = UDim2.new(0, 20, 0, 15)
+        TitleLabel.BackgroundTransparency = 1
+        TitleLabel.Text = tostring(title) or "Notification"
+        TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- Immer weiß als Fallback
+        TitleLabel.TextSize = 22
+        TitleLabel.Font = Enum.Font.GothamBold
+        TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+        TitleLabel.Parent = MainFrame
+
+        -- Nachricht mit sicheren Farbwerten
+        local MessageLabel = Instance.new("TextLabel")
+        MessageLabel.Name = "MessageLabel"
+        MessageLabel.Size = UDim2.new(1, -40, 1, -70)
+        MessageLabel.Position = UDim2.new(0, 20, 0, 60)
+        MessageLabel.BackgroundTransparency = 1
+        MessageLabel.Text = tostring(message) or ""
+        MessageLabel.TextColor3 = Color3.fromRGB(220, 220, 220) -- Immer hellgrau als Fallback
+        MessageLabel.TextSize = 16
+        MessageLabel.Font = Enum.Font.Gotham
+        MessageLabel.TextXAlignment = Enum.TextXAlignment.Left
+        MessageLabel.TextYAlignment = Enum.TextYAlignment.Top
+        MessageLabel.TextWrapped = true
+        MessageLabel.Parent = MainFrame
+
+        -- Discord Icon Button
+        local DiscordButton = Instance.new("ImageButton")
+        DiscordButton.Name = "DiscordButton"
+        DiscordButton.Size = UDim2.new(0, 40, 0, 40)
+        DiscordButton.Position = UDim2.new(1, -50, 0, 15)
+        DiscordButton.BackgroundTransparency = 1
+        DiscordButton.Image = "rbxassetid://9751245768"
+        DiscordButton.Parent = MainFrame
+        
+        -- Close Button mit sicheren Farbwerten
+        local CloseButton = Instance.new("TextButton")
+        CloseButton.Name = "CloseButton"
+        CloseButton.Size = UDim2.new(0, 80, 0, 30)
+        CloseButton.Position = UDim2.new(1, -90, 1, -40)
+        CloseButton.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
+        CloseButton.Text = "Schließen"
+        CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- Immer weiß als Fallback
+        CloseButton.Font = Enum.Font.Gotham
+        CloseButton.TextSize = 14
+        CloseButton.Parent = MainFrame
+        
+        UICorner:Clone().Parent = CloseButton
+
+        -- Animation: Einblenden
+        MainFrame:TweenPosition(
+            UDim2.new(1, -30, 1, -180),
+            Enum.EasingDirection.Out,
+            Enum.EasingStyle.Quint,
+            0.8,
+            true
+        )
+
+        -- Button-Funktionen
+        DiscordButton.MouseButton1Click:Connect(function()
+            OpenWebsite("https://discord.gg/XEaaPU5CgH")
+        end)
+        
+        CloseButton.MouseButton1Click:Connect(function()
+            MainFrame:TweenPosition(
+                UDim2.new(1, 450, 1, -180),
+                Enum.EasingDirection.In,
+                Enum.EasingStyle.Quad,
+                0.6,
+                true,
+                function()
+                    ScreenGui:Destroy()
+                end
+            )
+        end)
+
+        -- Automatisch nach 12 Sekunden ausblenden
+        task.delay(12, function()
+            if ScreenGui and ScreenGui.Parent then
+                MainFrame:TweenPosition(
+                    UDim2.new(1, 450, 1, -180),
+                    Enum.EasingDirection.In,
+                    Enum.EasingStyle.Quad,
+                    0.6,
+                    true,
+                    function()
+                        ScreenGui:Destroy()
+                    end
+                )
+            end
+        end)
+    end)
+end
+
+-- Benachrichtigung mit Error-Handling anzeigen
+pcall(function()
+    ShowNotification(
+        "🌟 VORTEX ANTICHEAT BYPASS",
+        "• Discord invitation has been sent\n"..
+        "• Click on the Discord icon for our server\n\n"..
+        "Thank you for using Vortex!"
+    )
+    
+    -- Webseite öffnen nach 3 Sekunden
+    task.wait(3)
+    OpenWebsite("https://vortexhubscript.framer.website/") -- Hier deine URL eintragen
+end)
